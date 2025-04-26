@@ -1,4 +1,4 @@
-_*This is the [Frontend](https://github.com/lensilen/77TopUp) repository of the project below. 
+_*This is the [Frontend](#) repository of the project below. 
 Click here to see the [Backend](https://github.com/ltnzz/77TopUp_BE) one._
 
 ---
@@ -14,7 +14,7 @@ Situs ini dibuat sebagai Capstone Final Project oleh kelompok 2 dengan pembagian
 - **Frontend**
     - [lensilen](https://github.com/lensilen) (Ketua)
     - [zygreion](https://github.com/zygreion)
-    - [ArzaVie](https://github.com/ArzaVie)
+    - [ArzaVie](#)
 - **Backend**
     - [ltnzz](https://github.com/ltnzz)
 
