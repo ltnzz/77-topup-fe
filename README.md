@@ -14,7 +14,7 @@ Situs ini dibuat sebagai Capstone Final Project oleh kelompok 2 dengan pembagian
 - **Frontend**
     - [lensilen](https://github.com/lensilen) (Ketua)
     - [zygreion](https://github.com/zygreion)
-    - [ArzaVie](#)
+    - [ArzaVie](https://github.com/ArzaVie)
 - **Backend**
     - [ltnzz](https://github.com/ltnzz)
 
@@ -53,3 +53,4 @@ NODE_ENV=production node app
    [node.js]: <http://nodejs.org>
    [express]: <http://expressjs.com>
    [backend]: <https://github.com/ltnzz/77TopUp_BE>
+Z
