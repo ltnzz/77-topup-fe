@@ -29,6 +29,13 @@ Situs ini dibuat sebagai Capstone Final Project oleh kelompok 2 dengan pembagian
 
 ## Installation
 
+```sh
+git clone https://github.com/lensilen/77TopUp.git
+cd 77TopUp
+npm install
+npm run dev
+```
+
 <!-- Dillinger requires [Node.js](https://nodejs.org/) v10+ to run.
 
 Install the dependencies and devDependencies and start the server.
@@ -53,4 +60,3 @@ NODE_ENV=production node app
    [node.js]: <http://nodejs.org>
    [express]: <http://expressjs.com>
    [backend]: <https://github.com/ltnzz/77TopUp_BE>
-Z
