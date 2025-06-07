@@ -17,7 +17,8 @@ export default function AccountInfo({
 
     try {
       const res = await fetch(
-        `https://api.isan.eu.org/nickname/ml?id=1114917746&server=13486`
+        `https://api.isan.eu.org/nickname/${gameData?.game?.ihsangan_slug}?id=${formData.id}` +
+          (gameData?.game?.is_using_server ? `&server=${formData.server}` : "")
       );
       const data = await res.json();
 
