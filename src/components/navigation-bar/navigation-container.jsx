@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { InputSearch } from "./input-search";
 import { DropdownLink } from "./dropdown-link";
 import { Link, useLocation } from "react-router";
-import { FaClipboardList, FaGamepad, FaHome, FaRegCreditCard } from "react-icons/fa";
+import {
+  FaClipboardList,
+  FaGamepad,
+  FaHome,
+  FaRegCreditCard,
+} from "react-icons/fa";
 
 export const Navbar = () => {
   const location = useLocation();
@@ -29,11 +34,14 @@ export const Navbar = () => {
 
   // Navbar user
   const isHomeActive = userRole === "user" && location.pathname === "/";
-  const isCekTransaksiActive = userRole === "user" && location.pathname === "/transaksi";
+  const isCekTransaksiActive =
+    userRole === "user" && location.pathname === "/transaksi";
 
   // Navbar admin
-  const isAdminGamesActive = userRole === "admin" && location.pathname === "/admin/games";
-  const isAdminPaymentsActive = userRole === "admin" && location.pathname === "/admin/payments";
+  const isAdminGamesActive =
+    userRole === "admin" && location.pathname === "/admin/games";
+  const isAdminPaymentsActive =
+    userRole === "admin" && location.pathname === "/admin/payments";
 
   // List halaman yang search bar tidak akan muncul
   const hiddenPaths = ["/"];
@@ -50,7 +58,10 @@ export const Navbar = () => {
     setError("");
     setApiData(null);
 
-    if (formData.email === "tujuhtujuhtopupgas@gmail.com" && formData.password === "77TopupGas") {
+    if (
+      formData.email === "tujuhtujuhtopupgas@gmail.com" &&
+      formData.password === "77TopupGas"
+    ) {
       // Handle Admin Login
       setIsAdminLoggedIn(true); // Set login admin
       setModalType("otp"); // Buka modal OTP setelah login admin
@@ -75,7 +86,7 @@ export const Navbar = () => {
       const data = await res.json();
       console.log(data); // Debug data yang diterima dari server
 
-      if (data?.email && data?.password) {
+      if (data?.auth) {
         setApiData(data); // Menyimpan data login yang diterima
         setIsLoggedIn(true); // Set status login menjadi true
         setModalType("login"); // Setelah login, modal akan berpindah ke login
@@ -112,6 +123,8 @@ export const Navbar = () => {
       return;
     }
 
+    console.log("Data yang dikirim:", formData); // Langkah 1: Log data yang dikirim
+
     try {
       const res = await fetch(
         "https://77-top-up-be.vercel.app/77topup/sign-up", // URL untuk registrasi
@@ -129,9 +142,10 @@ export const Navbar = () => {
         }
       );
 
-      if (res.status === 201) {
-        const data = await res.json();
-        console.log(data); // Debug data yang diterima
+      // Mengecek apakah respons berhasil
+      if (res.ok) {
+        const data = await res.json(); // Parsing respons JSON
+        console.log("Respons dari server:", data); // Debugging respons
 
         if (data?.data?.email && data?.data?.username && data?.data?.password) {
           setApiData(data.data); // Menyimpan data user yang berhasil didaftarkan
@@ -142,9 +156,13 @@ export const Navbar = () => {
           );
         }
       } else {
+        // Menangani error server
+        const errorData = await res.text(); // Ambil error dalam bentuk teks
+        console.log("Error registrasi:", errorData); // Debug error
         setError("Gagal registrasi. Coba lagi nanti.");
       }
     } catch (err) {
+      console.error("Error saat menghubungi server:", err); // Log error jaringan atau parsing
       setError("Gagal menghubungi server registrasi. Coba lagi nanti.");
     }
 
