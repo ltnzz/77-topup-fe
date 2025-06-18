@@ -142,22 +142,20 @@ export const Navbar = () => {
         }
       );
 
+      const data = await res.json(); // Parsing respons JSON
+
       // Mengecek apakah respons berhasil
       if (res.ok) {
-        const data = await res.json(); // Parsing respons JSON
         console.log("Respons dari server:", data); // Debugging respons
 
         if (data?.data?.email && data?.data?.username && data?.data?.password) {
           setApiData(data.data); // Menyimpan data user yang berhasil didaftarkan
           setModalType("login"); // Pindah ke modal login setelah registrasi berhasil
         } else {
-          setError(
-            "Registrasi gagal. Periksa kembali data yang Anda masukkan."
-          );
+          setError("Registrasi gagal. Periksa kembali data yang Anda masukkan.");
         }
       } else {
         // Menangani error server
-        const errorData = await res.text(); // Ambil error dalam bentuk teks
         console.log("Error registrasi:", errorData); // Debug error
         setError(data.message);
       }
