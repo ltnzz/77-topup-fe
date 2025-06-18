@@ -10,7 +10,7 @@ import { GameList } from "./pages/admin/GameList";
 import { TopUp } from "./pages/user/TopUp";
 import Dashboard from "./pages/admin/Dashboard";
 import EditGames from "./pages/admin/EditGames";
-import { InputSearch } from "./components/navigation-bar/input-search";
+import { SearchPage } from "./components/navigation-bar/input-search";
 
 export default function App() {
   return (
@@ -18,8 +18,8 @@ export default function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/search" element={<InputSearch />} />
           <Route path="/homepage" element={<HomePage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/topup/:slug" element={<TopUp />} />
           <Route path="/auth/login" element={<Login />}></Route>
           <Route path="/auth/register" element={<Register />}></Route>
