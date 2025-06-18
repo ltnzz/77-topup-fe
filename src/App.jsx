@@ -18,7 +18,7 @@ export default function App() {
       <Routes>
         <Route element={<RootLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/search" element={<HomePage />} />
+          <Route path="/search" element={<InputSearch />} />
           <Route path="/homepage" element={<HomePage />} />
           <Route path="/topup/:slug" element={<TopUp />} />
           <Route path="/auth/login" element={<Login />}></Route>
