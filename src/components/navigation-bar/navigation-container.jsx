@@ -20,13 +20,13 @@ export const Navbar = () => {
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Tambahkan state untuk status login
 
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); // Tambahkan state untuk status admin login
+  // const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); // Tambahkan state untuk status admin login
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     username: "", // Menambahkan username untuk registrasi
     confirmPassword: "", // Menambahkan confirm password untuk registrasi
-    otp: "", // Field untuk OTP setelah login admin
+    // otp: "", // Field untuk OTP setelah login admin
   });
 
   // Navbar status
@@ -38,10 +38,10 @@ export const Navbar = () => {
     userRole === "user" && location.pathname === "/transaksi";
 
   // Navbar admin
-  const isAdminGamesActive =
-    userRole === "admin" && location.pathname === "/admin/games";
-  const isAdminPaymentsActive =
-    userRole === "admin" && location.pathname === "/admin/payments";
+  // const isAdminGamesActive =
+  //   userRole === "admin" && location.pathname === "/admin/games";
+  // const isAdminPaymentsActive =
+  //   userRole === "admin" && location.pathname === "/admin/payments";
 
   // List halaman yang search bar tidak akan muncul
   const hiddenPaths = ["/"];
@@ -71,7 +71,7 @@ export const Navbar = () => {
 
     try {
       const res = await fetch(
-        "https://77-top-up-be.vercel.app/77topup/admin/login", // Pastikan URL benar
+        "https://77-top-up-be.vercel.app/77topup/sign-in", // Pastikan URL benar
         {
           method: "POST",
           headers: {
@@ -84,14 +84,19 @@ export const Navbar = () => {
         }
       );
       const data = await res.json();
-      console.log(data); // Debug data yang diterima dari server
+      
+      if (!res.ok) {
+        setError(data.message);
+        return;
+      }
 
       if (data?.auth) {
         setApiData(data); // Menyimpan data login yang diterima
         setIsLoggedIn(true); // Set status login menjadi true
         setModalType("login"); // Setelah login, modal akan berpindah ke login
       } else {
-        setError("Akun tidak ditemukan atau password salah.");
+        setError(data.message);
+        return
       }
     } catch (err) {
       setError("Gagal menghubungi server login. Coba lagi nanti.");
@@ -101,14 +106,14 @@ export const Navbar = () => {
   };
 
   // Fungsi untuk handle OTP setelah login admin
-  const handleOTP = async () => {
-    if (formData.otp === "123456") {
-      alert("OTP Valid! Welcome Admin!");
-      setModalType("adminDashboard");
-    } else {
-      setError("Invalid OTP, please try again.");
-    }
-  };
+  // const handleOTP = async () => {
+  //   if (formData.otp === "123456") {
+  //     alert("OTP Valid! Welcome Admin!");
+  //     setModalType("adminDashboard");
+  //   } else {
+  //     setError("Invalid OTP, please try again.");
+  //   }
+  // };
 
   // Fungsi untuk handle registrasi dan fetch
   const handleRegister = async () => {
@@ -312,7 +317,7 @@ export const Navbar = () => {
       )}
 
       {/* Modal OTP Admin */}
-      {isOpen && modalType === "otp" && (
+      {/* {isOpen && modalType === "otp" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
             <h1 className="text-2xl font-bold text-center text-[#3774b5]">
@@ -346,7 +351,7 @@ export const Navbar = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Modal Register */}
       {isOpen && modalType === "register" && (
