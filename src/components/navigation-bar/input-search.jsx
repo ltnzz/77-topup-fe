@@ -15,7 +15,7 @@ export const InputSearch = () => {
       event.preventDefault();
 
       try {
-        const res = await fetch(`https://77-top-up-be.vercel.app/77topup/games/search?keyword=${encodeURIComponent(keyword)}`);
+        const res = await fetch(`https://77-top-up-be.vercel.app/77topup/search?keyword=${encodeURIComponent(keyword)}`);
         
         const data = await res.json();
 
