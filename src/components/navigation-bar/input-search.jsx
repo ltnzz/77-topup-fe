@@ -1,49 +1,38 @@
-import React, { useRef } from "react";
-import { FaMagnifyingGlass } from "react-icons/fa6";
-import { useNavigate } from "react-router";
+// 
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+const useQuery = () => new URLSearchParams(useLocation().search);
 
 export const InputSearch = () => {
-  const ref = useRef();
-  const navigate = useNavigate();
+  const query = useQuery();
+  const keyword = query.get("keyword");
+  const [results, setResults] = useState([]);
 
-  const handleSearch = async (event) => {
-    const keyword = ref.current.value;
+  useEffect(() => {
+    if (!keyword) return;
 
-    if (!keyword || keyword.trim() === "") return;
-
-    if (event.key === "Enter" || event.type === "click") {
-      event.preventDefault();
-
+    const fetchData = async () => {
       try {
-        const res = await fetch(`https://77-top-up-be.vercel.app/search?keyword=${encodeURIComponent(keyword)}`);
-        
+        const res = await fetch(`https://77-top-up-be.vercel.app/search?keyword=${keyword}`);
         const data = await res.json();
-
-        navigate("/search", { state: { keyword, results: data } });
-        ref.current.value = "";
-      } catch (error) {
-        console.error("Gagal fetch data game:", error);
+        setResults(data); // asumsi data sudah berupa array
+      } catch (err) {
+        console.error("Gagal fetch:", err);
       }
-    }
-  };
+    };
+
+    fetchData();
+  }, [keyword]);
 
   return (
-    <>
-      <div className="relative max-w-md">
-        <input
-          placeholder="Cari game favoritmu..."
-          className="input w-full rounded-lg pr-14 focus:outline-none focus:border-gray-300 transition-colors du"
-          ref={ref}
-          onKeyDown={handleSearch}
-        />
-        <button
-          onClick={handleSearch}
-          // className="absolute btn inset-y-0 right-0 z-30"
-          className="absolute inset-y-0 right-0 z-30 pl-3 pr-4 active:drop-shadow-sm rounded-full"
-        >
-          <FaMagnifyingGlass size={20} className="text-gray-500 " />
-        </button>
-      </div>
-    </>
+    <div>
+      <h2>Hasil pencarian: {keyword}</h2>
+      <ul>
+        {results.map((game) => (
+          <li key={game.id}>{game.name}</li>
+        ))}
+      </ul>
+    </div>
   );
 };
