@@ -159,10 +159,9 @@ export const Navbar = () => {
         // Menangani error server
         const errorData = await res.text(); // Ambil error dalam bentuk teks
         console.log("Error registrasi:", errorData); // Debug error
-        setError("Gagal registrasi. Coba lagi nanti.");
+        setError(data.message);
       }
     } catch (err) {
-      console.error("Error saat menghubungi server:", err); // Log error jaringan atau parsing
       setError("Gagal menghubungi server registrasi. Coba lagi nanti.");
     }
 
