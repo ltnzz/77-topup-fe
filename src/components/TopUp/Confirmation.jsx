@@ -10,7 +10,7 @@ export default function Confirmation({ prevStep, formData, gameData }) {
   // ==========================================================
   useEffect(() => {
     // URL script Snap.js dari Midtrans
-    const snapScriptUrl = "https://app.sandbox.midtrans.com";
+    const snapScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
 
     // Client Key Midtrans Anda
     const myMidtransClientKey = "SB-Mid-client-jW6L5eBLSCT7AjXQ"; // <-- GANTI DENGAN CLIENT KEY ANDA
@@ -60,11 +60,11 @@ export default function Confirmation({ prevStep, formData, gameData }) {
       window.snap.pay(transactionToken, {
         onSuccess: (result) => {
           alert("Pembayaran berhasil!");
-          navigate("/transaksi");
+          navigate("/");
         },
         onPending: (result) => {
           alert("Menunggu pembayaran Anda!");
-          navigate("/transaksi");
+          navigate("/");
         },
         onError: (result) => {
           alert("Pembayaran gagal!");
