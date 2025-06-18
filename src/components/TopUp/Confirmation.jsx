@@ -10,7 +10,7 @@ export default function Confirmation({ prevStep, formData, gameData }) {
   // ==========================================================
   useEffect(() => {
     // URL script Snap.js dari Midtrans
-    const snapScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+    const snapScriptUrl = "https://app.sandbox.midtrans.com";
 
     // Client Key Midtrans Anda
     const myMidtransClientKey = "SB-Mid-client-jW6L5eBLSCT7AjXQ"; // <-- GANTI DENGAN CLIENT KEY ANDA
@@ -41,7 +41,7 @@ export default function Confirmation({ prevStep, formData, gameData }) {
       const payload = {
         id_packages: formData.selectedItem.id_packages,
         username: formData.nickname,
-        email: "pembeli@example.com",
+        email: "guest@example.com",
       };
 
       const response = await fetch("https://77-top-up-be.vercel.app/pay/:", {

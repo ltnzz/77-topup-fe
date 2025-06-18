@@ -58,16 +58,16 @@ export const Navbar = () => {
     setError("");
     setApiData(null);
 
-    if (
-      formData.email === "tujuhtujuhtopupgas@gmail.com" &&
-      formData.password === "77TopupGas"
-    ) {
-      // Handle Admin Login
-      setIsAdminLoggedIn(true); // Set login admin
-      setModalType("otp"); // Buka modal OTP setelah login admin
-      setLoading(false);
-      return;
-    }
+    // if (
+    //   formData.email === "tujuhtujuhtopupgas@gmail.com" &&
+    //   formData.password === "77TopupGas"
+    // ) {
+    //   // Handle Admin Login
+    //   setIsAdminLoggedIn(true); // Set login admin
+    //   setModalType("otp"); // Buka modal OTP setelah login admin
+    //   setLoading(false);
+    //   return;
+    // }
 
     try {
       const res = await fetch(
@@ -148,7 +148,7 @@ export const Navbar = () => {
       );
 
       const data = await res.json(); // Parsing respons JSON
-
+      
       if (!res.ok) {
         setError(data.message);
         return;
