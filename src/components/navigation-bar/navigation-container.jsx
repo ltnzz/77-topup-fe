@@ -71,7 +71,7 @@ export const Navbar = () => {
 
     try {
       const res = await fetch(
-        "https://77-top-up-be.vercel.app/77topup/sign-in", // Pastikan URL benar
+        "https://77-top-up-be.vercel.app/77topup/admin/login", // Pastikan URL benar
         {
           method: "POST",
           headers: {
@@ -285,7 +285,7 @@ export const Navbar = () => {
               {loading && <p>Loading...</p>}
               {error && <p className="text-red-500">{error}</p>}
               {apiData && (
-                <p className="text-green-500">Welcome {apiData.email}!</p>
+                <p className="text-green-500">Welcome {apiData.username}!</p>
               )}
               <p className="text-center text-sm">
                 Belum memiliki akun?{" "}
