@@ -144,6 +144,11 @@ export const Navbar = () => {
 
       const data = await res.json(); // Parsing respons JSON
 
+      if (!res.ok) {
+        setError(data.message);
+        return;
+      }
+
       // Mengecek apakah respons berhasil
       if (res.ok) {
         console.log("Respons dari server:", data); // Debugging respons
@@ -158,6 +163,7 @@ export const Navbar = () => {
         // Menangani error server
         console.log("Error registrasi:", errorData); // Debug error
         setError(data.message);
+        return;
       }
     } catch (err) {
       setError("Gagal menghubungi server registrasi. Coba lagi nanti.");
