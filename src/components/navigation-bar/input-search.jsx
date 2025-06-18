@@ -56,12 +56,13 @@ export const InputSearch = () => {
       try {
         const res = await fetch(`https://77-top-up-be.vercel.app/search?keyword=${encodeURIComponent(keyword)}`);
         const data = await res.json();
-        setResults(data.data); // sesuaikan jika respons-nya nested misalnya `data.results`
+        setResults(data.games); // sesuaikan jika respons-nya nested misalnya `data.results`
       } catch (err) {
         console.error("Gagal fetch:", err);
         setResults([]); // kosongkan hasil kalau error
       }
     }
+    fetchData();
   };
 
   return (
