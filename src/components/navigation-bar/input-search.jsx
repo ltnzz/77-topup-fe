@@ -4,17 +4,26 @@ import { useNavigate } from "react-router";
 
 export const InputSearch = () => {
   const ref = useRef();
-  const navigation = useNavigate();
+  const navigate = useNavigate();
 
-  const handleSearch = (event) => {
+  const handleSearch = async (event) => {
     const keyword = ref.current.value;
 
-    if (!keyword || keyword.trim() == "") return;
+    if (!keyword || keyword.trim() === "") return;
 
     if (event.key === "Enter" || event.type === "click") {
       event.preventDefault();
-      navigation(`/search/${keyword}`);
-      ref.current.value = "";
+
+      try {
+        const res = await fetch(`https://77-top-up-be.vercel.app/77topup/games/search?keyword=${encodeURIComponent(keyword)}`);
+        
+        const data = await res.json();
+
+        navigate("/search", { state: { keyword, results: data } });
+        ref.current.value = "";
+      } catch (error) {
+        console.error("Gagal fetch data game:", error);
+      }
     }
   };
 
