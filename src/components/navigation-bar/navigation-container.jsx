@@ -38,10 +38,10 @@ export const Navbar = () => {
     userRole === "user" && location.pathname === "/transaksi";
 
   // Navbar admin
-  // const isAdminGamesActive =
-  //   userRole === "admin" && location.pathname === "/admin/games";
-  // const isAdminPaymentsActive =
-  //   userRole === "admin" && location.pathname === "/admin/payments";
+  const isAdminGamesActive =
+    userRole === "admin" && location.pathname === "/admin/games";
+  const isAdminPaymentsActive =
+    userRole === "admin" && location.pathname === "/admin/payments";
 
   // List halaman yang search bar tidak akan muncul
   const hiddenPaths = ["/"];
@@ -52,13 +52,59 @@ export const Navbar = () => {
     setIsOpen(true);
   };
 
+// const handleAdmin = async () => {
+//   setLoading(true);
+//   setError("");
+//   setApiData(null);
+
+//   try {
+//     const res = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({
+//         email: formData.email,
+//         password: formData.password,
+//       }),
+//     });
+
+//     const data = await res.json();
+//     if (!res.ok) {
+//       setError(data.message);
+//       return;
+//     }
+
+//     if (data?.auth && data?.user?.role === "admin") {
+//         setApiData(data);
+//         setModalType("otp");
+//         return;
+//       }
+      
+//       if (data?.auth) {
+//         setIsLoggedIn(true);
+//         setApiData(data);
+//         setModalType("adminLogin");
+//       } else {
+//         setError(data.message);
+//       }
+//   } catch(err) {
+//     setError("Gagal menghubungi server. Coba lagi nanti.");
+//   }
+// }
+
 const handleAdmin = async () => {
   setLoading(true);
   setError("");
   setApiData(null);
 
+  if (!formData.email || !formData.password) {
+    setError("Email dan password wajib diisi.");
+    setLoading(false);
+    return;
+  }
+
   try {
-    const res = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
+    // 1. Coba login USER dulu
+    const res = await fetch("https://77-top-up-be.vercel.app/77topup/sign-in", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -68,28 +114,43 @@ const handleAdmin = async () => {
     });
 
     const data = await res.json();
-    if (!res.ok) {
-      setError(data.message);
+    console.log("User login:", data);
+
+    if (res.ok && data.auth) {
+      setApiData(data);
+      setIsLoggedIn(true);
+      setIsOpen(false);
       return;
     }
 
-    if (data?.auth && data?.user?.role === "admin") {
-        setApiData(data);
-        setModalType("otp");
-        return;
-      }
-      
-      if (data?.auth) {
-        setIsLoggedIn(true);
-        setApiData(data);
-        setModalType("adminLogin");
-      } else {
-        setError(data.message);
-      }
-  } catch(err) {
-    setError("Gagal menghubungi server. Coba lagi nanti.");
+    // 2. Kalau gagal, coba login ADMIN
+    const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
+
+    const adminData = await adminRes.json();
+    console.log("Admin login:", adminData);
+
+    if (adminRes.ok && adminData.token) {
+      setApiData(adminData); // simpan token admin
+      setModalType("otp");   // buka form OTP
+      return;
+    }
+
+    // Gagal semua
+    setError(adminData.message || "Login gagal.");
+  } catch (err) {
+    setError("Gagal menghubungi server login.");
   }
-}
+
+  setLoading(false);
+};
+
 
 const handleOTP = async () => {
   setLoading(true);
