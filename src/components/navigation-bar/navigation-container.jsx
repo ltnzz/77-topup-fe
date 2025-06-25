@@ -20,7 +20,6 @@ export const Navbar = () => {
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Tambahkan state untuk status login
 
-  // const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); // Tambahkan state untuk status admin login
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -29,8 +28,16 @@ export const Navbar = () => {
     otp: "", // Field untuk OTP setelah login admin
   });
 
-  // Navbar status
-  const userRole = "user"; // "user" or "admin"
+  // Tambahkan useEffect ini untuk melacak perubahan state
+  useEffect(() => {
+    console.log("State Updated: isOpen =", isOpen, ", modalType =", modalType);
+  }, [isOpen, modalType]);
+
+
+  // Navbar status - Hapus 'user' atau 'admin' secara hardcode jika Anda ingin dinamis
+  // const userRole = "user"; // "user" or "admin"
+  // Anda mungkin perlu mendapatkan peran pengguna dari apiData setelah login
+  const userRole = apiData?.user?.role || "user"; // Dapatkan peran dari apiData jika ada
 
   // Navbar user
   const isHomeActive = userRole === "user" && location.pathname === "/";
@@ -48,83 +55,27 @@ export const Navbar = () => {
 
   // Fungsi untuk membuka modal login
   const openLoginModal = () => {
+    console.log("openLoginModal called: Setting modalType to 'sign-in' and isOpen to true");
     setModalType("sign-in");
     setIsOpen(true);
   };
 
-// const handleAdmin = async () => {
-//   setLoading(true);
-//   setError("");
-//   setApiData(null);
+  const handleAdmin = async () => {
+    console.log("handleAdmin called");
+    setLoading(true);
+    setError("");
+    setApiData(null);
 
-//   try {
-//     const res = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({
-//         email: formData.email,
-//         password: formData.password,
-//       }),
-//     });
-
-//     const data = await res.json();
-//     if (!res.ok) {
-//       setError(data.message);
-//       return;
-//     }
-
-//     if (data?.auth && data?.user?.role === "admin") {
-//         setApiData(data);
-//         setModalType("otp");
-//         return;
-//       }
-      
-//       if (data?.auth) {
-//         setIsLoggedIn(true);
-//         setApiData(data);
-//         setModalType("adminLogin");
-//       } else {
-//         setError(data.message);
-//       }
-//   } catch(err) {
-//     setError("Gagal menghubungi server. Coba lagi nanti.");
-//   }
-// }
-
-const handleAdmin = async () => {
-  setLoading(true);
-  setError("");
-  setApiData(null);
-
-  if (!formData.email || !formData.password) {
-    setError("Email dan password wajib diisi.");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    // Coba login pengguna terlebih dahulu
-    const userRes = await fetch("https://77-top-up-be.vercel.app/77topup/sign-in", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-      }),
-    });
-
-    const userData = await userRes.json();
-
-    if (userRes.ok && userData.auth) {
-      // Login pengguna berhasil
-      setApiData(userData);
-      setIsLoggedIn(true);
-      setIsOpen(false); // Tutup modal hanya jika login pengguna sudah final
+    if (!formData.email || !formData.password) {
+      setError("Email dan password wajib diisi.");
       setLoading(false);
-      return; // Keluar dari sini, tidak perlu mencoba login admin
-    } else {
-      // Login pengguna gagal, sekarang coba login admin
-      const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
+      return;
+    }
+
+    try {
+      // Coba login pengguna terlebih dahulu
+      console.log("Attempting user login...");
+      const userRes = await fetch("https://77-top-up-be.vercel.app/77topup/sign-in", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -133,121 +84,97 @@ const handleAdmin = async () => {
         }),
       });
 
-      const adminData = await adminRes.json();
-      console.log("Admin login:", adminData);
+      const userData = await userRes.json();
+      console.log("User login response:", userData);
 
-      if (adminRes.ok && adminData.token) {
-        // Login admin berhasil, lanjutkan ke OTP
-        setApiData(adminData);
-        setIsOpen(true); // Biarkan modal tetap terbuka untuk OTP
-        setModalType("otp");
+      if (userRes.ok && userData.auth) {
+        // Login pengguna berhasil
+        console.log("User login successful.");
+        setApiData(userData);
+        setIsLoggedIn(true);
+        setIsOpen(false); // Tutup modal hanya jika login pengguna sudah final
+        setLoading(false);
+        return; // Keluar dari sini, tidak perlu mencoba login admin
       } else {
-        setError(adminData.message || "Login gagal.");
+        console.log("User login failed or not authenticated, attempting admin login...");
+        // Login pengguna gagal, sekarang coba login admin
+        const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+
+        const adminData = await adminRes.json();
+        console.log("Admin login response:", adminData); // Ini sangat penting! Periksa isinya.
+
+        if (adminRes.ok && adminData.token) {
+          // Login admin berhasil, lanjutkan ke OTP
+          console.log("Admin login successful, setting modalType to 'otp' and isOpen to true.");
+          setApiData(adminData); // Simpan data admin, termasuk token
+          setIsOpen(true); // Biarkan modal tetap terbuka untuk OTP
+          setModalType("otp");
+        } else {
+          console.log("Admin login failed. Error:", adminData.message);
+          setError(adminData.message || "Login gagal.");
+        }
       }
+    } catch (err) {
+      console.error("Error during login process:", err);
+      setError("Gagal menghubungi server login.");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError("Gagal menghubungi server login.");
+  };
+
+
+  const handleOTP = async () => {
+    console.log("handleOTP called");
+    setLoading(true);
+    setError("");
+
+    try {
+      if (!apiData || !apiData.token) {
+        setError("Token autentikasi tidak ditemukan. Harap login kembali.");
+        setLoading(false);
+        return;
+      }
+
+      console.log("Verifying OTP with token:", apiData.token);
+      const res = await fetch("https://77-top-up-be.vercel.app/77topup/admin/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiData.token}`,
+        },
+        body: JSON.stringify({
+          otp: formData.otp,
+        }),
+      });
+
+      const data = await res.json();
+      console.log("OTP verification response:", data);
+
+      if (!res.ok) {
+        setError(data.message || "OTP Tidak Valid.");
+        return;
+      }
+
+      console.log("OTP verified successfully!");
+      setIsLoggedIn(true);
+      setIsOpen(false); // Tutup modal setelah OTP berhasil
+    } catch(err) {
+      console.error("Error during OTP verification:", err);
+      setError("Gagal verifikasi OTP.");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  setLoading(false);
-};
-
-const handleOTP = async () => {
-  setLoading(true);
-  setError("");
-
-  try {
-    const res = await fetch("https://77-top-up-be.vercel.app/77topup/admin/verify", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiData.token}`,
-      },
-      body: JSON.stringify({
-        otp: formData.otp,
-      }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.message || "OTP Tidak Valid.");
-      return;
-    }
-
-    setIsLoggedIn(true);
-    setIsOpen(false);
-  } catch(err) {
-    setError("Gagal verifikasi OTP.");
-  }
-
-  setLoading(false);
-}
-
-  // Fungsi untuk handle login dan fetch data dari API
-  // const handleLogin = async () => {
-  //   setLoading(true);
-  //   setError("");
-  //   setApiData(null);
-
-  //   // if (
-  //   //   formData.email === "tujuhtujuhtopupgas@gmail.com" &&
-  //   //   formData.password === "77TopupGas"
-  //   // ) {
-  //   //   // Handle Admin Login
-  //   //   setIsAdminLoggedIn(true); // Set login admin
-  //   //   setModalType("otp"); // Buka modal OTP setelah login admin
-  //   //   setLoading(false);
-  //   //   return;
-  //   // }
-
-  //   try {
-  //     const res = await fetch(
-  //       "https://77-top-up-be.vercel.app/77topup/sign-in", // Pastikan URL benar
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           email: formData.email, // Mengirimkan email dari form
-  //           password: formData.password, // Mengirimkan password dari form
-  //         }),
-  //       }
-  //     );
-  //     const data = await res.json();
-      
-  //     if (!res.ok) {
-  //       setError(data.message);
-  //       return;
-  //     }
-
-  //     if (data?.auth) {
-  //       setApiData(data); // Menyimpan data login yang diterima
-  //       setIsLoggedIn(true); // Set status login menjadi true
-  //       setModalType("sign-in"); // Setelah login, modal akan berpindah ke login
-  //     } else {
-  //       setError(data.message);
-  //       return
-  //     }
-  //   } catch (err) {
-  //     setError("Gagal menghubungi server login. Coba lagi nanti.");
-  //   }
-
-  //   setLoading(false); // Berhenti loading setelah selesai
-  // };
-
-  // Fungsi untuk handle OTP setelah login admin
-  // const handleOTP = async () => {
-  //   if (formData.otp === "123456") {
-  //     alert("OTP Valid! Welcome Admin!");
-  //     setModalType("adminDashboard");
-  //   } else {
-  //     setError("Invalid OTP, please try again.");
-  //   }
-  // };
-
-  // Fungsi untuk handle registrasi dan fetch
   const handleRegister = async () => {
+    console.log("handleRegister called");
     setLoading(true);
     setError("");
     setApiData(null);
@@ -277,31 +204,26 @@ const handleOTP = async () => {
       );
 
       const data = await res.json(); // Parsing respons JSON
-      
+      console.log("Register response:", data);
+
       if (!res.ok) {
         setError(data.message);
         return;
       }
 
       // Mengecek apakah respons berhasil
-      if (res.ok) {
-        if (data?.data?.email && data?.data?.username && data?.data?.password) {
-          setApiData(data.data); // Menyimpan data user yang berhasil didaftarkan
-          setModalType("sign-in"); // Pindah ke modal login setelah registrasi berhasil
-        } else {
-          setError("Registrasi gagal. Periksa kembali data yang Anda masukkan.");
-        }
+      if (data?.data?.email && data?.data?.username && data?.data?.password) {
+        setApiData(data.data); // Menyimpan data user yang berhasil didaftarkan
+        setModalType("sign-in"); // Pindah ke modal login setelah registrasi berhasil
       } else {
-        // Menangani error server
-        console.log("Error registrasi:", errorData); // Debug error
-        setError(data.message);
-        return;
+        setError("Registrasi gagal. Periksa kembali data yang Anda masukkan.");
       }
     } catch (err) {
+      console.error("Error during registration:", err);
       setError("Gagal menghubungi server registrasi. Coba lagi nanti.");
+    } finally {
+      setLoading(false); // Berhenti loading setelah selesai
     }
-
-    setLoading(false); // Berhenti loading setelah selesai
   };
 
   return (
@@ -444,6 +366,8 @@ const handleOTP = async () => {
       )}
 
       {/* Modal OTP Admin */}
+      {/* Tambahkan console.log di sini juga untuk memastikan kondisi rendering */}
+      {console.log("Rendering condition for OTP modal: isOpen =", isOpen, "&& modalType === 'otp'")}
       {isOpen && modalType === "otp" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
@@ -479,44 +403,6 @@ const handleOTP = async () => {
           </div>
         </div>
       )}
-
-      {/* {isOpen && modalType === "adminLogin" && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-        <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
-          <h1 className="text-2xl font-bold text-center text-[#3774b5]">Login Admin</h1>
-          <div className="flex flex-col gap-4 mt-4">
-            <input
-              type="text"
-              placeholder="Email Admin"
-              className="input input-bordered w-full max-w-xs"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="input input-bordered w-full max-w-xs"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-            <button
-              onClick={handleAdmin}
-              className="btn w-full max-w-xs bg-[#3774b5] text-white hover:bg-[#2d5a8f]"
-            >
-              Login Admin
-            </button>
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-          </div>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="absolute top-2 right-2 text-slate-500 hover:text-slate-700 text-xl"
-          >
-            &times;
-          </button>
-        </div>
-      </div>
-    )} */}
 
       {/* Modal Register */}
       {isOpen && modalType === "register" && (
