@@ -123,28 +123,33 @@ const handleAdmin = async () => {
       return;
     }
 
-    // 2. Kalau gagal, coba login ADMIN
-    const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.email,
-        password: formData.password,
-      }),
-    });
+    if (res.ok && data.auth) {
+      setApiData(data);
+      setIsLoggedIn(true);
+      setIsOpen(false);
+    } else {
+      // 2. Kalau gagal, coba login ADMIN
+      const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
-    const adminData = await adminRes.json();
-    console.log("Admin login:", adminData);
+      const adminData = await adminRes.json();
+      console.log("Admin login:", adminData);
 
-    if (adminRes.ok && adminData.token) {
-      setApiData(adminData); // simpan token admin
-      setIsOpen(true);
-      setModalType("otp");   // buka form OTP
-      return;
+      if (adminRes.ok && adminData.token) {
+        setApiData(adminData);
+        setIsOpen(true);
+        setModalType("otp");
+        return;
+      }
+
+      setError(adminData.message || "Login gagal.");
     }
-
-    // Gagal semua
-    setError(adminData.message || "Login gagal.");
   } catch (err) {
     setError("Gagal menghubungi server login.");
   }
@@ -444,7 +449,44 @@ const handleOTP = async () => {
         </div>
       )}
 
-      {isOpen && modalType === "adminLogin" && (
+      {/* Modal OTP Admin */}
+      {isOpen && modalType === "otp" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
+            <h1 className="text-2xl font-bold text-center text-[#3774b5]">
+              Enter OTP
+            </h1>
+            <div className="flex flex-col gap-4 mt-4">
+              <input
+                type="text"
+                placeholder="OTP"
+                className="input input-bordered w-full max-w-xs"
+                value={formData.otp}
+                onChange={(e) =>
+                  setFormData({ ...formData, otp: e.target.value })
+                }
+              />
+              <button
+                onClick={handleOTP} // Memproses OTP setelah admin login
+                className="btn w-full max-w-xs bg-[#3774b5] text-white hover:bg-[#2d5a8f]"
+              >
+                Verify OTP
+              </button>
+              {loading && <p>Loading...</p>}
+              {error && <p className="text-red-500">{error}</p>}
+            </div>
+
+            <button
+              onClick={() => setIsOpen(false)} // Menutup modal
+              className="absolute top-2 right-2 text-slate-500 hover:text-slate-700 text-xl"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* {isOpen && modalType === "adminLogin" && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
         <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
           <h1 className="text-2xl font-bold text-center text-[#3774b5]">Login Admin</h1>
@@ -480,45 +522,7 @@ const handleOTP = async () => {
           </button>
         </div>
       </div>
-    )}
-
-
-      {/* Modal OTP Admin */}
-      {isOpen && modalType === "handleOTP" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
-            <h1 className="text-2xl font-bold text-center text-[#3774b5]">
-              Enter OTP
-            </h1>
-            <div className="flex flex-col gap-4 mt-4">
-              <input
-                type="text"
-                placeholder="OTP"
-                className="input input-bordered w-full max-w-xs"
-                value={formData.otp}
-                onChange={(e) =>
-                  setFormData({ ...formData, otp: e.target.value })
-                }
-              />
-              <button
-                onClick={handleOTP} // Memproses OTP setelah admin login
-                className="btn w-full max-w-xs bg-[#3774b5] text-white hover:bg-[#2d5a8f]"
-              >
-                Verify OTP
-              </button>
-              {loading && <p>Loading...</p>}
-              {error && <p className="text-red-500">{error}</p>}
-            </div>
-
-            <button
-              onClick={() => setIsOpen(false)} // Menutup modal
-              className="absolute top-2 right-2 text-slate-500 hover:text-slate-700 text-xl"
-            >
-              &times;
-            </button>
-          </div>
-        </div>
-      )}
+    )} */}
 
       {/* Modal Register */}
       {isOpen && modalType === "register" && (
