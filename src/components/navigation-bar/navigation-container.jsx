@@ -103,8 +103,8 @@ const handleAdmin = async () => {
   }
 
   try {
-    // 1. Coba login USER dulu
-    const res = await fetch("https://77-top-up-be.vercel.app/77topup/sign-in", {
+    // Coba login pengguna terlebih dahulu
+    const userRes = await fetch("https://77-top-up-be.vercel.app/77topup/sign-in", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -113,14 +113,17 @@ const handleAdmin = async () => {
       }),
     });
 
-    const data = await res.json();
+    const userData = await userRes.json();
 
-    if (res.ok && data.auth) {
-      setApiData(data);
+    if (userRes.ok && userData.auth) {
+      // Login pengguna berhasil
+      setApiData(userData);
       setIsLoggedIn(true);
-      setIsOpen(false);
+      setIsOpen(false); // Tutup modal hanya jika login pengguna sudah final
+      setLoading(false);
+      return; // Keluar dari sini, tidak perlu mencoba login admin
     } else {
-      // 2. Kalau gagal, coba login ADMIN
+      // Login pengguna gagal, sekarang coba login admin
       const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -134,13 +137,13 @@ const handleAdmin = async () => {
       console.log("Admin login:", adminData);
 
       if (adminRes.ok && adminData.token) {
+        // Login admin berhasil, lanjutkan ke OTP
         setApiData(adminData);
-        setIsOpen(true);
+        setIsOpen(true); // Biarkan modal tetap terbuka untuk OTP
         setModalType("otp");
-        return;
+      } else {
+        setError(adminData.message || "Login gagal.");
       }
-
-      setError(adminData.message || "Login gagal.");
     }
   } catch (err) {
     setError("Gagal menghubungi server login.");
@@ -148,7 +151,6 @@ const handleAdmin = async () => {
 
   setLoading(false);
 };
-
 
 const handleOTP = async () => {
   setLoading(true);
