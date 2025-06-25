@@ -114,14 +114,6 @@ const handleAdmin = async () => {
     });
 
     const data = await res.json();
-    console.log("User login:", data);
-
-    if (res.ok && data.auth) {
-      setApiData(data);
-      setIsLoggedIn(true);
-      // setIsOpen(false);
-      return;
-    }
 
     if (res.ok && data.auth) {
       setApiData(data);
