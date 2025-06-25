@@ -124,7 +124,7 @@ const handleAdmin = async () => {
     }
 
     // 2. Kalau gagal, coba login ADMIN
-    const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/login", {
+    const adminRes = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
