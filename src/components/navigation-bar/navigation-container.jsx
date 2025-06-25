@@ -12,7 +12,7 @@ import {
 export const Navbar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false); // State untuk modal
-  const [modalType, setModalType] = useState("login"); // Set modalType default ke "login"
+  const [modalType, setModalType] = useState("sign-in"); // Set modalType default ke "login"
 
   // State untuk menyimpan data yang diambil dari API
   const [apiData, setApiData] = useState(null);
@@ -48,7 +48,7 @@ export const Navbar = () => {
 
   // Fungsi untuk membuka modal login
   const openLoginModal = () => {
-    setModalType("login");
+    setModalType("sign-in");
     setIsOpen(true);
   };
 
@@ -82,7 +82,7 @@ const handleAdmin = async () => {
       if (data?.auth) {
         setIsLoggedIn(true);
         setApiData(data);
-        setModalType("login");
+        setModalType("adminLogin");
       } else {
         setError(data.message);
       }
@@ -163,7 +163,7 @@ const handleOTP = async () => {
       if (data?.auth) {
         setApiData(data); // Menyimpan data login yang diterima
         setIsLoggedIn(true); // Set status login menjadi true
-        setModalType("login"); // Setelah login, modal akan berpindah ke login
+        setModalType("sign-in"); // Setelah login, modal akan berpindah ke login
       } else {
         setError(data.message);
         return
@@ -226,7 +226,7 @@ const handleOTP = async () => {
       if (res.ok) {
         if (data?.data?.email && data?.data?.username && data?.data?.password) {
           setApiData(data.data); // Menyimpan data user yang berhasil didaftarkan
-          setModalType("login"); // Pindah ke modal login setelah registrasi berhasil
+          setModalType("sign-in"); // Pindah ke modal login setelah registrasi berhasil
         } else {
           setError("Registrasi gagal. Periksa kembali data yang Anda masukkan.");
         }
@@ -325,7 +325,7 @@ const handleOTP = async () => {
       </div>
 
       {/* Modal Login */}
-      {isOpen && modalType === "login" && (
+      {isOpen && modalType === "sign-in" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
             <h1 className="text-2xl font-bold text-center text-[#3774b5]">
@@ -381,6 +381,45 @@ const handleOTP = async () => {
           </div>
         </div>
       )}
+
+      {isOpen && modalType === "adminLogin" && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+        <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
+          <h1 className="text-2xl font-bold text-center text-[#3774b5]">Login Admin</h1>
+          <div className="flex flex-col gap-4 mt-4">
+            <input
+              type="text"
+              placeholder="Email Admin"
+              className="input input-bordered w-full max-w-xs"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="input input-bordered w-full max-w-xs"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            />
+            <button
+              onClick={handleAdmin}
+              className="btn w-full max-w-xs bg-[#3774b5] text-white hover:bg-[#2d5a8f]"
+            >
+              Login Admin
+            </button>
+            {loading && <p>Loading...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+          </div>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-2 right-2 text-slate-500 hover:text-slate-700 text-xl"
+          >
+            &times;
+          </button>
+        </div>
+      </div>
+    )}
+
 
       {/* Modal OTP Admin */}
       {isOpen && modalType === "otp" && (
