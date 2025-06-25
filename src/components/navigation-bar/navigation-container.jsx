@@ -26,7 +26,7 @@ export const Navbar = () => {
     password: "",
     username: "", // Menambahkan username untuk registrasi
     confirmPassword: "", // Menambahkan confirm password untuk registrasi
-    // otp: "", // Field untuk OTP setelah login admin
+    otp: "", // Field untuk OTP setelah login admin
   });
 
   // Navbar status
@@ -51,6 +51,76 @@ export const Navbar = () => {
     setModalType("login");
     setIsOpen(true);
   };
+
+const handleAdmin = async () => {
+  setLoading(true);
+  setError("");
+  setApiData(null);
+
+  try {
+    const res = await fetch("https://77-top-up-be.vercel.app/77topup/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.message);
+      return;
+    }
+
+    if (data?.auth && data?.user?.role === "admin") {
+        setApiData(data);
+        setModalType("otp");
+        return;
+      }
+      
+      if (data?.auth) {
+        setIsLoggedIn(true);
+        setApiData(data);
+        setModalType("login");
+      } else {
+        setError(data.message);
+      }
+  } catch(err) {
+    setError("Gagal menghubungi server. Coba lagi nanti.");
+  }
+}
+
+const handleOTP = async () => {
+  setLoading(true);
+  setError("");
+
+  try {
+    const res = await fetch("https://77-top-up-be.vercel.app/77topup/admin/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiData.Token}`,
+      },
+      body: JSON.stringify({
+        otp: formData.otp,
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.message || "OTP Tidak Valid.");
+      return;
+    }
+
+    setIsLoggedIn(true);
+    setIsOpen(false);
+  } catch(err) {
+    setError("Gagal verifikasi OTP.");
+  }
+
+  setLoading(false);
+}
 
   // Fungsi untuk handle login dan fetch data dari API
   const handleLogin = async () => {
@@ -128,8 +198,6 @@ export const Navbar = () => {
       return;
     }
 
-    console.log("Data yang dikirim:", formData); // Langkah 1: Log data yang dikirim
-
     try {
       const res = await fetch(
         "https://77-top-up-be.vercel.app/77topup/sign-up", // URL untuk registrasi
@@ -156,8 +224,6 @@ export const Navbar = () => {
 
       // Mengecek apakah respons berhasil
       if (res.ok) {
-        console.log("Respons dari server:", data); // Debugging respons
-
         if (data?.data?.email && data?.data?.username && data?.data?.password) {
           setApiData(data.data); // Menyimpan data user yang berhasil didaftarkan
           setModalType("login"); // Pindah ke modal login setelah registrasi berhasil
@@ -317,7 +383,7 @@ export const Navbar = () => {
       )}
 
       {/* Modal OTP Admin */}
-      {/* {isOpen && modalType === "otp" && (
+      {isOpen && modalType === "otp" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
             <h1 className="text-2xl font-bold text-center text-[#3774b5]">
@@ -351,7 +417,7 @@ export const Navbar = () => {
             </button>
           </div>
         </div>
-      )} */}
+      )}
 
       {/* Modal Register */}
       {isOpen && modalType === "register" && (
