@@ -161,7 +161,7 @@ const handleOTP = async () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiData.Token}`,
+        Authorization: `Bearer ${apiData.token}`,
       },
       body: JSON.stringify({
         otp: formData.otp,
@@ -184,57 +184,57 @@ const handleOTP = async () => {
 }
 
   // Fungsi untuk handle login dan fetch data dari API
-  const handleLogin = async () => {
-    setLoading(true);
-    setError("");
-    setApiData(null);
+  // const handleLogin = async () => {
+  //   setLoading(true);
+  //   setError("");
+  //   setApiData(null);
 
-    // if (
-    //   formData.email === "tujuhtujuhtopupgas@gmail.com" &&
-    //   formData.password === "77TopupGas"
-    // ) {
-    //   // Handle Admin Login
-    //   setIsAdminLoggedIn(true); // Set login admin
-    //   setModalType("otp"); // Buka modal OTP setelah login admin
-    //   setLoading(false);
-    //   return;
-    // }
+  //   // if (
+  //   //   formData.email === "tujuhtujuhtopupgas@gmail.com" &&
+  //   //   formData.password === "77TopupGas"
+  //   // ) {
+  //   //   // Handle Admin Login
+  //   //   setIsAdminLoggedIn(true); // Set login admin
+  //   //   setModalType("otp"); // Buka modal OTP setelah login admin
+  //   //   setLoading(false);
+  //   //   return;
+  //   // }
 
-    try {
-      const res = await fetch(
-        "https://77-top-up-be.vercel.app/77topup/sign-in", // Pastikan URL benar
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email, // Mengirimkan email dari form
-            password: formData.password, // Mengirimkan password dari form
-          }),
-        }
-      );
-      const data = await res.json();
+  //   try {
+  //     const res = await fetch(
+  //       "https://77-top-up-be.vercel.app/77topup/sign-in", // Pastikan URL benar
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           email: formData.email, // Mengirimkan email dari form
+  //           password: formData.password, // Mengirimkan password dari form
+  //         }),
+  //       }
+  //     );
+  //     const data = await res.json();
       
-      if (!res.ok) {
-        setError(data.message);
-        return;
-      }
+  //     if (!res.ok) {
+  //       setError(data.message);
+  //       return;
+  //     }
 
-      if (data?.auth) {
-        setApiData(data); // Menyimpan data login yang diterima
-        setIsLoggedIn(true); // Set status login menjadi true
-        setModalType("sign-in"); // Setelah login, modal akan berpindah ke login
-      } else {
-        setError(data.message);
-        return
-      }
-    } catch (err) {
-      setError("Gagal menghubungi server login. Coba lagi nanti.");
-    }
+  //     if (data?.auth) {
+  //       setApiData(data); // Menyimpan data login yang diterima
+  //       setIsLoggedIn(true); // Set status login menjadi true
+  //       setModalType("sign-in"); // Setelah login, modal akan berpindah ke login
+  //     } else {
+  //       setError(data.message);
+  //       return
+  //     }
+  //   } catch (err) {
+  //     setError("Gagal menghubungi server login. Coba lagi nanti.");
+  //   }
 
-    setLoading(false); // Berhenti loading setelah selesai
-  };
+  //   setLoading(false); // Berhenti loading setelah selesai
+  // };
 
   // Fungsi untuk handle OTP setelah login admin
   // const handleOTP = async () => {
@@ -386,7 +386,7 @@ const handleOTP = async () => {
       </div>
 
       {/* Modal Login */}
-      {isOpen && modalType === "sign-in" && (
+      {isOpen && modalType === "handleAdmin" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
             <h1 className="text-2xl font-bold text-center text-[#3774b5]">
