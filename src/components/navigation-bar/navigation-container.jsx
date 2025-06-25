@@ -484,7 +484,7 @@ const handleOTP = async () => {
 
 
       {/* Modal OTP Admin */}
-      {isOpen && modalType === "otp" && (
+      {isOpen && modalType === "handleOTP" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
             <h1 className="text-2xl font-bold text-center text-[#3774b5]">
