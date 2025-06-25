@@ -119,7 +119,7 @@ const handleAdmin = async () => {
     if (res.ok && data.auth) {
       setApiData(data);
       setIsLoggedIn(true);
-      setIsOpen(false);
+      // setIsOpen(false);
       return;
     }
 
