@@ -386,7 +386,7 @@ const handleOTP = async () => {
       </div>
 
       {/* Modal Login */}
-      {isOpen && modalType === "handleAdmin" && (
+      {isOpen && modalType === "sign-in" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
           <div className="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6">
             <h1 className="text-2xl font-bold text-center text-[#3774b5]">
@@ -412,7 +412,7 @@ const handleOTP = async () => {
                 }
               />
               <button
-                onClick={handleLogin}
+                onClick={handleAdmin}
                 className="btn w-full max-w-xs bg-[#3774b5] text-white hover:bg-[#2d5a8f]"
               >
                 Login
