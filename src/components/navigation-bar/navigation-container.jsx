@@ -138,6 +138,7 @@ const handleAdmin = async () => {
 
     if (adminRes.ok && adminData.token) {
       setApiData(adminData); // simpan token admin
+      setIsOpen(true);
       setModalType("otp");   // buka form OTP
       return;
     }
